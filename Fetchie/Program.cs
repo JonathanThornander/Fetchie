@@ -22,11 +22,11 @@ namespace Fetchie
 
             var app = builder.Build();
 
-            if (app.Environment.IsDevelopment())
-            {
+            //if (app.Environment.IsDevelopment())
+            //{
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+            //}
 
             app.UseHttpsRedirection();
 
@@ -34,7 +34,7 @@ namespace Fetchie
 
 
             app.MapControllers();
-            app.MapHub<LogHub>("/logHub");
+            app.MapHub<QueueHub>("/queues");
 
 
             app.Run();

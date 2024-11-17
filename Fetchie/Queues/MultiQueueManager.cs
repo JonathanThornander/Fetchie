@@ -8,9 +8,9 @@ namespace Fetchie.Queues
 {
     public class MultiQueueManager
     {
-        private readonly IHubContext<LogHub> _hubContext;
+        private readonly IHubContext<QueueHub> _hubContext;
 
-        public MultiQueueManager(IHubContext<LogHub> hubContext)
+        public MultiQueueManager(IHubContext<QueueHub> hubContext)
         {
             _hubContext = hubContext;
         }

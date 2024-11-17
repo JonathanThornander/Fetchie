@@ -2,7 +2,7 @@
 
 namespace Fetchie.SignalR.Hubs
 {
-    public class LogHub : Hub
+    public class QueueHub : Hub
     {
         public async Task JoinQueue(string queueName)
         {
