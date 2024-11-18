@@ -17,11 +17,11 @@ namespace Fetchie.Queues
 
         private readonly ConcurrentDictionary<string, PriorityMessageQueue> _queues = new();
 
-        public void Enqueue(Message message)
+        public void Enqueue(Message message, bool replace = false)
         {
             var queue = _queues.GetOrAdd(message.Queue, _ => CreateQueue(message.Queue));
 
-            queue.Enqueue(message);
+            queue.Enqueue(message, replace);
         }
 
         public Message? GetCurrentState(string queueName)
@@ -30,6 +30,7 @@ namespace Fetchie.Queues
             {
                 return queue.GetCurrentState();
             }
+
             return null;
         }
 
@@ -41,9 +42,16 @@ namespace Fetchie.Queues
 
         public IEnumerable<string> GetQueueNames() => _queues.Keys;
 
-        public void PurgeQueue(string queueName)
+        public void DeleteQueue(string queueName)
         {
-            _queues.TryRemove(queueName, out _);
+            _queues.TryRemove(queueName, out var queue);
+            queue?.Dispose();
+        }
+
+        public void ClearQueue(string queueName)
+        {
+            _queues.TryGetValue(queueName, out var queue);
+            queue?.Clear();
         }
 
         private PriorityMessageQueue CreateQueue(string queueName)
@@ -54,6 +62,7 @@ namespace Fetchie.Queues
             {
                 _hubContext.Clients.Group(queueName).SendAsync(Topics.QueueStateChanged, queueName, message);
             };
+
             return queue;
         }
     }

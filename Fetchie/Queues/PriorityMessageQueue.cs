@@ -5,35 +5,41 @@ public class PriorityMessageQueue : IDisposable
     private bool _disposed;
 
     private readonly object _lock = new();
-    private readonly List<Message> _queue = new();
+    private readonly List<Message> _queue = [];
     public event Action<Message?>? OnStateChange;
 
     private Message? _currentState;
 
-    public void Enqueue(Message message)
+    public void Enqueue(Message message, bool replace = false)
     {
-        if (message.Expiration.HasValue && message.Expiration.Value <= DateTime.UtcNow)
+        if (message.ExpirationUtc.HasValue && message.ExpirationUtc.Value <= DateTime.UtcNow)
         {
             return;
         }
 
-        var index = _queue.BinarySearch(message, new MessageComparer());
-        if (index < 0) index = ~index;
-        
         lock (_lock)
         {
+            if (replace && _queue.Count != 0 && _queue[0].Severity == message.Severity)
+            {
+                _queue.RemoveAt(0);
+            }
+
+            var index = _queue.BinarySearch(message, new MessageComparer());
+            if (index < 0) index = ~index;
+
             _queue.Insert(index, message);
         }
 
         UpdateState();
     }
 
+
     public void RemoveExpired()
     {
         lock (_lock)
         {
             var now = DateTime.UtcNow;
-            _queue.RemoveAll(message => message.Expiration.HasValue && message.Expiration.Value <= now);
+            _queue.RemoveAll(message => message.ExpirationUtc.HasValue && message.ExpirationUtc.Value <= now);
         }
 
         UpdateState();
@@ -50,6 +56,16 @@ public class PriorityMessageQueue : IDisposable
     }
 
     public IEnumerable<Message> GetMessages() => _queue;
+
+    public void Clear()
+    {
+        lock (_lock)
+        {
+            _queue.Clear();
+        }
+
+        UpdateState();
+    }
 
     private void UpdateState()
     {

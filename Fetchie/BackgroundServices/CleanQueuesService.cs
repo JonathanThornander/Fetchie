@@ -31,14 +31,14 @@ namespace Fetchie.BackgroundServices
         private void ScheduleMessageExpiration(PriorityMessageQueue queue, string queueName, CancellationToken stoppingToken)
         {
             var expiringMessages = queue.GetMessages()
-                .Where(msg => msg.Expiration.HasValue &&
-                              msg.Expiration.Value > DateTime.UtcNow &&
-                              msg.Expiration.Value <= DateTime.UtcNow.AddSeconds(10))
+                .Where(msg => msg.ExpirationUtc.HasValue &&
+                              msg.ExpirationUtc.Value > DateTime.UtcNow &&
+                              msg.ExpirationUtc.Value <= DateTime.UtcNow.AddSeconds(10))
                 .ToList();
 
             foreach (var message in expiringMessages)
             {
-                var expirationTime = message.Expiration!.Value;
+                var expirationTime = message.ExpirationUtc!.Value;
 
                 var taskKey = $"{queueName}_{message.CreatedAt}";
 
