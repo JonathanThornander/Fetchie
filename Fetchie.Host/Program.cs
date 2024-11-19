@@ -15,7 +15,7 @@ namespace Fetchie.Host
 
             builder.Services.AddSingleton<MessageQueueManager>();
             builder.Services.AddSignalR();
-            builder.Services.AddHostedService<MultiQueueCleanupService>();
+            builder.Services.AddHostedService<MessageQueueCleanupService>();
             builder.Services.AddControllers();
 
             builder.Services.AddEndpointsApiExplorer();

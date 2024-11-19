@@ -2,12 +2,12 @@
 
 namespace Fetchie.Host.BackgroundServices
 {
-    public class MultiQueueCleanupService : BackgroundService
+    public class MessageQueueCleanupService : BackgroundService
     {
         private readonly MessageQueueManager _queueManager;
-        private readonly Dictionary<string, Task> _scheduledTasks = new();
+        private readonly Dictionary<string, Task> _scheduledTasks = [];
 
-        public MultiQueueCleanupService(MessageQueueManager queueManager)
+        public MessageQueueCleanupService(MessageQueueManager queueManager)
         {
             _queueManager = queueManager;
         }
@@ -50,11 +50,11 @@ namespace Fetchie.Host.BackgroundServices
                 var delay = expirationTime - DateTime.UtcNow;
                 var task = Task.Delay(delay, stoppingToken).ContinueWith(_ =>
                 {
-                    queue.RemoveExpired(); // Remove expired messages
-                    _scheduledTasks.Remove(taskKey); // Cleanup task dictionary
+                    queue.RemoveExpired();
+                    _scheduledTasks.Remove(taskKey);
                 }, stoppingToken);
 
-                _scheduledTasks[taskKey] = task; // Track the scheduled task
+                _scheduledTasks[taskKey] = task;
             }
         }
     }
