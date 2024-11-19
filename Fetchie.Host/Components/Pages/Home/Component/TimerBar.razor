@@ -1,0 +1,58 @@
+﻿@using System.Timers
+
+<MudProgressLinear Value="@ProgressValue" Color="Color.Primary" Max="100" Min="0" />
+
+@code {
+    private double ProgressValue { get; set; } = 0;
+
+    [Parameter]
+    public DateTime ReferenceDate { get; set; }
+
+    [Parameter]
+    public DateTime TargetDate { get; set; }
+
+    private Timer _timer;
+
+    protected override void OnInitialized()
+    {
+        // Initialize the timer to tick every second
+        _timer = new Timer(1000);
+        _timer.Elapsed += OnTimerElapsed;
+        _timer.Start();
+
+        UpdateProgress();
+    }
+
+    private void OnTimerElapsed(object sender, ElapsedEventArgs e)
+    {
+        InvokeAsync(UpdateProgress);
+    }
+
+    private void UpdateProgress()
+    {
+        var now = DateTime.UtcNow;
+        var totalDuration = (TargetDate - ReferenceDate).TotalSeconds;
+        var elapsed = (now - ReferenceDate).TotalSeconds;
+
+        if (totalDuration <= 0)
+        {
+            ProgressValue = 100; // If the target date is before or equal to the reference date
+        }
+        else
+        {
+            ProgressValue = Math.Min(100, Math.Max(0, (elapsed / totalDuration) * 100));
+        }
+
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        if (_timer != null)
+        {
+            _timer.Stop();
+            _timer.Elapsed -= OnTimerElapsed;
+            _timer.Dispose();
+        }
+    }
+}

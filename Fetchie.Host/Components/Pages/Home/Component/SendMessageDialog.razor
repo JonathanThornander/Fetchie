@@ -1,0 +1,24 @@
+﻿@using Fetchie.Host.Models
+<MudDialog Style="max-height: 80%; overflow-y: scroll">
+    <DialogContent>
+        <MudAutocomplete Label="Queue" @bind-Value="Queue" SearchFunc="SearchQueues" />
+
+        <MudTextField Immediate Label="Title" @bind-Value="Title" />
+         <MudTextField Label="Body" @bind-Value="Body" />
+         <MudSelect Label="Severity" @bind-Value="Severity">
+             <MudSelectItem Value="MessageSeverity.None" Text="None" />
+             <MudSelectItem Value="MessageSeverity.Information" Text="Information" />
+             <MudSelectItem Value="MessageSeverity.Warning" Text="Warning" />
+             <MudSelectItem Value="MessageSeverity.Error" Text="Error" />
+             <MudSelectItem Value="MessageSeverity.Critical" Text="Critical" />
+         </MudSelect>
+
+         <MudCheckBox T="bool" Label="Replace" @bind-Checked="Replace" />
+        <MudDatePicker Label="Expiration" @bind-Date="ExpirationDateUtc" />
+         <MudTimePicker Label="Expiration Time" @bind-Time="ExpirationTimeUtc" />
+     </DialogContent>
+     <DialogActions>
+         <MudButton Color="Color.Primary" OnClick="MudDialog.Cancel">Close</MudButton>
+         <MudButton Color="Color.Primary" Disabled="!CanSubmit()" OnClick="Submit">Confirm</MudButton>
+     </DialogActions>
+ </MudDialog>

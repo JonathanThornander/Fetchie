@@ -1,7 +1,9 @@
-using Fetchie.BackgroundServices;
-using Fetchie.Components;
-using Fetchie.Queues;
-using Fetchie.SignalR.Hubs;
+using Dynq;
+using Fetchie.Host.BackgroundServices;
+using Fetchie.Host.Components;
+using Fetchie.Host.Queues;
+using Fetchie.Host.SignalR.Hubs;
+using MudBlazor.Services;
 
 namespace Fetchie.Host
 {
@@ -11,7 +13,7 @@ namespace Fetchie.Host
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddSingleton<MultiQueueManager>();
+            builder.Services.AddSingleton<MessageQueueManager>();
             builder.Services.AddSignalR();
             builder.Services.AddHostedService<MultiQueueCleanupService>();
             builder.Services.AddControllers();
@@ -19,8 +21,13 @@ namespace Fetchie.Host
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddMediatR(c => c.RegisterServicesFromAssemblies(typeof(Program).Assembly));
+            builder.Services.AddDynq([typeof(Program).Assembly]);
+
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+
+            builder.Services.AddMudServices();
 
             var app = builder.Build();
 

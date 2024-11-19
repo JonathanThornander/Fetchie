@@ -1,0 +1,69 @@
+﻿@using System.Collections.Generic
+@using Fetchie.Host.Models
+
+<style>
+   .traffic-light {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+}
+
+.light {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+
+    background-color: white;
+    opacity: 0.1;
+    transition: opacity 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Severity-specific colors */
+
+.light.green {
+    background-color: green;
+}
+
+.light.blue {
+    background-color: blue;
+}
+
+.light.yellow {
+    background-color: orange;
+}
+
+.light.red {
+    background-color: red;
+}
+
+/* Highlight active light */
+.light.active {
+    opacity: 1;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Flash animation for critical */
+.light.flashing {
+    animation: flash .8s infinite;
+}
+
+/* Define the flash animation */
+@@keyframes flash {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0);
+    }
+    50% {
+        opacity: 0.2;
+        box-shadow: 0 0 15px 3px rgba(0, 0, 0, 0.8);
+    }
+}
+
+</style>
+
+<div class="traffic-light">
+    <div class="light green @(CurrentSeverity == MessageSeverity.None || CurrentSeverity == MessageSeverity.Information ? "active" : "")" title="None"></div>
+    <div class="light yellow @(CurrentSeverity == MessageSeverity.Warning ? "active" : "")" title="Warning"></div>
+    <div class="light red @(CurrentSeverity == MessageSeverity.Error || CurrentSeverity == MessageSeverity.Critical ? "active" : "") @(CurrentSeverity == MessageSeverity.Critical ? "flashing" : "")" title="Warning"></div>
+</div>

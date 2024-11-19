@@ -1,0 +1,39 @@
+﻿<div class="queue-card card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">@Queue</h4>
+        @if (Head?.Severity is not null)
+        {
+            <Fetchie.Host.Components.Components.MessageSeverityLight CurrentSeverity="Head.Severity" />
+        }
+    </div>
+
+    @if (Head is not null)
+    {
+        <div class="card-body">
+            <h5>@Head.Title</h5>
+            <p>@Head.Body</p>
+            <p>Created @Head.CreatedAt.ToLocalTime().ToString("g")</p>
+
+
+            @if (Head.ExpirationUtc is not null)
+            {
+                <div class="text-muted">
+                    Expires: @Head.ExpirationUtc.Value.ToLocalTime().ToString("g")
+                </div>
+
+                <TimerBar ReferenceDate="Head.CreatedAt" TargetDate="Head.ExpirationUtc.Value" />
+            }
+        </div>
+    }
+    else
+    {
+        <div class="card-body text-muted">
+            No messages in this queue.
+        </div>
+    }
+
+    <div class="card-footer d-flex justify-content-end">
+        <MudButton Class="mr-2" Variant="Variant.Filled" Color="Color.Warning" OnClick="ClearQueue">Clear Queue</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="DeleteQueue">Delete Queue</MudButton>
+    </div>
+</div>

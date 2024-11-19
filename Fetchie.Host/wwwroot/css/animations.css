@@ -1,0 +1,65 @@
+﻿.animate-create {
+    animation: animateCreate 0.5s forwards;
+    transform-origin: center center;
+}
+
+.animate-fade {
+    animation: fadeIn 0.2s ease-in;
+    transform-origin: center center;
+}
+
+@keyframes animateCreate {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1) rotate(360deg);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.wrapper {
+}
+
+    .wrapper > :first-child {
+        height: 100%;
+        width: 100%;
+    }
+
+.glowing-item {
+    animation: glowAnimation 2s infinite;
+}
+
+.glowing-link {
+    text-decoration: none;
+    color: #AD05FA;
+}
+
+
+@keyframes glowAnimation {
+    0% {
+        box-shadow: 0 0 10px rgba(173, 5, 250, 0.8);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(173, 5, 250, 0.6);
+    }
+
+    100% {
+        box-shadow: 0 0 10px rgba(173, 5, 250, 0.8);
+    }
+}
